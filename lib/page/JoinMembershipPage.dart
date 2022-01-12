@@ -15,13 +15,18 @@ class _JoinMembershipPageState extends State<JoinMembershipPage> {
   final myId = TextEditingController();
   final myPassword = TextEditingController();
 
+  bool finishLoaded = false;
   @override
   void initState() {
     super.initState();
-    init();
+    Future future = init();
+    future.then((value){
+      finishLoaded = true;
+    });
   }
 
-  init() async {
+  Future<void> init() async {
+    // await Future.delayed(Duration(seconds: 3));
     JoinMembershipPage.prefs = await SharedPreferences.getInstance();
     setState(() {
       id = (JoinMembershipPage.prefs.getString('id') ?? '');
@@ -31,6 +36,17 @@ class _JoinMembershipPageState extends State<JoinMembershipPage> {
 
   @override
   Widget build(BuildContext context) {
+    return !finishLoaded ? CircularProgressIndicator() : loadedWidget();
+  }
+
+  Widget widgetSize(Widget widget) {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Container(height: 40, width: 400, child: widget),
+    );
+  }
+
+  Widget loadedWidget() {
     return Scaffold(
       body: Container(
         child: Center(
@@ -74,13 +90,6 @@ class _JoinMembershipPageState extends State<JoinMembershipPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget widgetSize(Widget widget) {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Container(height: 40, width: 400, child: widget),
     );
   }
 }
